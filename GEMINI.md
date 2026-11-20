@@ -50,7 +50,7 @@ src/
 3. **Gemini AI Interactions**:
    - Prefer structured output (`responseMimeType: 'application/json'`) when returning data to the client.
    - Specify system instructions via `config.systemInstruction`.
-   - Default model: `gemini-3.8-flash` for high speed and low latency.
+   - Default model: `gemini-3.1-flash-lite` (ligero, ultra rápido y alta disponibilidad en el free tier).
    - Properly parse responses and handle API failures gracefully.
 
 4. **Code Style**:
