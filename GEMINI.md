@@ -1,6 +1,6 @@
 # react-openai-backend (nest-gpt)
 
-Backend service built with **NestJS** and **TypeScript** providing OpenAI-powered APIs for frontend applications.
+Backend service built with **NestJS** and **TypeScript** providing generative AI APIs (Google Gemini) for frontend applications.
 
 ---
 
@@ -8,7 +8,7 @@ Backend service built with **NestJS** and **TypeScript** providing OpenAI-powere
 
 - **Framework**: [NestJS](https://nestjs.com/) v10 (Express platform)
 - **Language**: TypeScript v5.1+
-- **AI SDK**: [OpenAI Node SDK](https://github.com/openai/openai-node) v4 (`openai`)
+- **AI SDK**: [Google Gen AI SDK](https://github.com/googleapis/js-genai) (`@google/genai`)
 - **Validation**: `class-validator`, `class-transformer`
 - **Config**: `@nestjs/config` for `.env` management
 - **Formatting & Linting**: Prettier, ESLint
@@ -21,14 +21,14 @@ Backend service built with **NestJS** and **TypeScript** providing OpenAI-powere
 src/
 ├── app.module.ts              # Root application module (loads ConfigModule and feature modules)
 ├── main.ts                    # Application entrypoint (CORS, global ValidationPipe, port 3000)
-└── gpt/                       # Main GPT feature module
+└── gpt/                       # Main GPT/AI feature module
     ├── gpt.module.ts          # Module definition
     ├── gpt.controller.ts      # HTTP endpoints routing
-    ├── gpt.service.ts         # OpenAI client initialization & use-case orchestration
+    ├── gpt.service.ts         # GoogleGenAI client initialization & use-case orchestration
     ├── dtos/                  # Data Transfer Objects with class-validator
     │   ├── index.ts           # Barrel export
     │   └── orthography.dto.ts
-    └── use-cases/             # Pure use case functions isolating OpenAI logic & prompts
+    └── use-cases/             # Pure use case functions isolating AI logic & prompts
         ├── index.ts           # Barrel export
         └── orthography.use-case.ts
 ```
@@ -39,17 +39,18 @@ src/
 
 1. **Use-Case Pattern**:
    - Controllers handle HTTP routing and request/response mapping.
-   - Services instantiate external dependencies (e.g., `OpenAI`) and delegate to specialized use-case functions.
-   - Business logic, prompts, and OpenAI API calls reside inside `use-cases/<feature>.use-case.ts`.
+   - Services instantiate external dependencies (e.g., `GoogleGenAI`) and delegate to specialized use-case functions.
+   - Business logic, prompts, and Gemini API calls reside inside `use-cases/<feature>.use-case.ts`.
    - Export all use cases and DTOs via their respective `index.ts` barrel files.
 
 2. **DTO & Validation**:
    - Use `class-validator` decorators (`@IsString()`, `@IsInt()`, `@IsOptional()`, etc.) on all input DTOs.
    - `ValidationPipe` is registered globally with `{ whitelist: true, forbidNonWhitelisted: true }`.
 
-3. **OpenAI Interactions**:
-   - Prefer structured output (e.g., `response_format: { type: 'json_object' }`) when returning data to the client.
-   - Keep system prompts clear and specify JSON return schemas when applicable.
+3. **Gemini AI Interactions**:
+   - Prefer structured output (`responseMimeType: 'application/json'`) when returning data to the client.
+   - Specify system instructions via `config.systemInstruction`.
+   - Default model: `gemini-3.1-flash-lite` (ligero, ultra rápido y alta disponibilidad en el free tier).
    - Properly parse responses and handle API failures gracefully.
 
 4. **Code Style**:
@@ -76,5 +77,5 @@ src/
 Copy `.env.template` to `.env` and configure:
 
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
